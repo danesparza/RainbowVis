@@ -8,13 +8,6 @@ import (
 	"strings"
 )
 
-var (
-	minNum     int
-	maxNum     int
-	startColor string
-	endColor   string
-)
-
 type Rainbow struct {
 	MinNum int
 	MaxNum int
@@ -28,7 +21,7 @@ type ColorGradient struct {
 	MaxNum     int
 }
 
-func SetGradient(colorStart, colorEnd string) error {
+func (cg *ColorGradient) SetGradient(colorStart, colorEnd string) error {
 
 	start, err := GetHexColor(colorStart)
 	if err != nil {
@@ -40,18 +33,18 @@ func SetGradient(colorStart, colorEnd string) error {
 		return fmt.Errorf("end color error: %v", err)
 	}
 
-	startColor = start
-	endColor = end
+	cg.StartColor = start
+	cg.EndColor = end
 
 	return nil
 }
 
-func SetNumberRange(minNumber, maxNumber int) (err error) {
+func (cg *ColorGradient) SetNumberRange(minNumber, maxNumber int) (err error) {
 	err = nil
 
 	if maxNumber > minNumber {
-		minNum = minNumber
-		maxNum = maxNumber
+		cg.MinNum = minNumber
+		cg.MaxNum = maxNumber
 	} else {
 		err = fmt.Errorf("maxNumber %v is not greater than minNumber %v", maxNumber, minNumber)
 	}
@@ -59,26 +52,26 @@ func SetNumberRange(minNumber, maxNumber int) (err error) {
 	return err
 }
 
-func ColorAt(number int) string {
+func (cg ColorGradient) ColorAt(number int) string {
 	return fmt.Sprintf("%s%s%s",
-		CalcHex(number, startColor[0:2], endColor[0:2]),
-		CalcHex(number, startColor[2:4], endColor[2:4]),
-		CalcHex(number, startColor[4:6], endColor[4:6]))
+		cg.CalcHex(number, cg.StartColor[0:2], cg.EndColor[0:2]),
+		cg.CalcHex(number, cg.StartColor[2:4], cg.EndColor[2:4]),
+		cg.CalcHex(number, cg.StartColor[4:6], cg.EndColor[4:6]))
 }
 
-func CalcHex(number int, channelStart_base16, channelEnd_base16 string) string {
+func (cg ColorGradient) CalcHex(number int, channelStart_base16, channelEnd_base16 string) string {
 	num := number
 
 	//	Make sure we're between min and max
-	if num < minNum {
-		num = minNum
+	if num < cg.MinNum {
+		num = cg.MinNum
 	}
-	if num > maxNum {
-		num = maxNum
+	if num > cg.MaxNum {
+		num = cg.MaxNum
 	}
 
 	//	Calculate the range
-	numRange := maxNum - minNum
+	numRange := cg.MaxNum - cg.MinNum
 
 	//	Convert from base16 to base10
 	cStart_base10, _ := strconv.ParseInt(channelStart_base16, 16, 0)
@@ -86,7 +79,7 @@ func CalcHex(number int, channelStart_base16, channelEnd_base16 string) string {
 
 	//	Determine where we should be in the range for the specific portion of the color
 	cPerUnit := float64(cEnd_base10-cStart_base10) / float64(numRange)
-	cBase10 := math.Round(cPerUnit*float64(num-minNum) + float64(cStart_base10))
+	cBase10 := math.Round(cPerUnit*float64(num-cg.MinNum) + float64(cStart_base10))
 
 	//	Return the result as hex
 	return FormatHex(fmt.Sprintf("%x", int(cBase10)))
@@ -128,9 +121,11 @@ func GetHexColor(color string) (string, error) {
 	}
 }
 
-func init() {
-	minNum = 0
-	maxNum = 100
-	startColor = "ff0000"
-	endColor = "0000ff"
+func GetColorGradient() ColorGradient {
+	return ColorGradient{
+		MinNum:     0,
+		MaxNum:     100,
+		StartColor: "ff0000",
+		EndColor:   "0000ff",
+	}
 }

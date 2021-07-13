@@ -48,11 +48,12 @@ func TestIsHexColor_InvalidColor_IsNotValid(t *testing.T) {
 
 func TestColorAt_ValidNumber_ReturnsHex(t *testing.T) {
 	//	Arrange
-	numberToCheck := 7
-	expectedHex := "ed0012"
+	numberToCheck := 23
+	expectedHex := "c4003b"
+	cg := rainbow.GetColorGradient()
 
 	//	Act
-	v1 := rainbow.ColorAt(7)
+	v1 := cg.ColorAt(numberToCheck)
 
 	//	Assert
 	if v1 != expectedHex {
@@ -65,9 +66,10 @@ func TestSetNumberRange_ValidRange_NoError(t *testing.T) {
 	//	Arrange
 	minNumber := 7
 	maxNumber := 10
+	cg := rainbow.GetColorGradient()
 
 	//	Act
-	v1 := rainbow.SetNumberRange(minNumber, maxNumber)
+	v1 := cg.SetNumberRange(minNumber, maxNumber)
 
 	//	Assert
 	if v1 != nil {
@@ -79,9 +81,10 @@ func TestSetNumberRange_InvalidRange_Error(t *testing.T) {
 	//	Arrange
 	minNumber := 15
 	maxNumber := 10
+	cg := rainbow.GetColorGradient()
 
 	//	Act
-	v1 := rainbow.SetNumberRange(minNumber, maxNumber)
+	v1 := cg.SetNumberRange(minNumber, maxNumber)
 
 	//	Assert
 	if v1 == nil {
@@ -137,4 +140,25 @@ func TestGetHexColor_InvalidNamedColor_Error(t *testing.T) {
 		t.Errorf("GetHexColor failed.  Passed %v and expected an error, but didn't get one", color)
 	}
 
+}
+
+func TestSetGradient_ValidColors_ColorAtReturnsCorrectColors(t *testing.T) {
+	//	Arrange
+	color1 := "ff0000"
+	color2 := "00ff00"
+	expectedResult := "c43b00"
+	cg := rainbow.GetColorGradient()
+
+	//	Act
+	err := cg.SetGradient(color1, color2)
+	v1 := cg.ColorAt(23)
+
+	//	Assert
+	if err != nil {
+		t.Errorf("SetGradient failed.  Passed %v and %v and didn't expect an error, but got %v", color1, color2, err)
+	}
+
+	if v1 != expectedResult {
+		t.Errorf("SetGradient failed.  Passed %v and %v and didn't get the expected color %v back -- instead, got %v", color1, color2, expectedResult, v1)
+	}
 }
