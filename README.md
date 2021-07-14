@@ -4,7 +4,7 @@ Port of the [javascript RainbowVis library](https://github.com/anomal/RainbowVis
 # Usage
 Install in your project
 ```shell 
-get github.com/danesparza/RainbowVis
+go get github.com/danesparza/RainbowVis
 ```
 Then
 ```go
