@@ -162,3 +162,39 @@ func TestSetGradient_ValidColors_ColorAtReturnsCorrectColors(t *testing.T) {
 		t.Errorf("SetGradient failed.  Passed %v and %v and didn't get the expected color %v back -- instead, got %v", color1, color2, expectedResult, v1)
 	}
 }
+
+func TestRainbow_ValidColors_ColorAtReturnsCorrectColors(t *testing.T) {
+	//	Arrange
+	expectedResult := "ffb200"
+	rb := rainbow.GetRainbow()
+
+	//	Act
+	v1 := rb.ColorAt(23)
+
+	//	Assert
+	if v1 != expectedResult {
+		t.Errorf("ColorAt failed.  Didn't get the expected color %v back -- instead, got %v", expectedResult, v1)
+	}
+}
+
+func TestSetSpectrum_ValidColors_ColorAtReturnsCorrectColors(t *testing.T) {
+	//	Arrange
+	expectedResult := "ff3908"
+	color1 := "ff000e" // Bright red
+	color2 := "ff7c00" // Bright orange
+	color3 := "f6ff00" // Bright yellow
+	rb := rainbow.GetRainbow()
+
+	//	Act
+	err := rb.SetSpectrum(color1, color2, color3)
+	v1 := rb.ColorAt(23)
+
+	//	Assert
+	if err != nil {
+		t.Errorf("SetSpectrum failed.  Didn't expect an error but got %v", err)
+	}
+
+	if v1 != expectedResult {
+		t.Errorf("ColorAt failed.  Didn't get the expected color %v back -- instead, got %v", expectedResult, v1)
+	}
+}
